@@ -7,7 +7,8 @@ interface PropertyAttributes {
   id: string;
   title: string;
   description: string;
-  pricePerNight: number;
+  price: number;
+  currency: string;
   location: string;
   hostId: string;
 }
@@ -22,7 +23,8 @@ class Property
   public id!: string;
   public title!: string;
   public description!: string;
-  public pricePerNight!: number;
+  public price!: number;
+  public currency!: string;
   public location!: string;
   public hostId!: string;
 }
@@ -43,9 +45,14 @@ Property.init(
       type: DataTypes.TEXT,
       allowNull: false
     },
-    pricePerNight: {
+    price: {
       type: DataTypes.FLOAT,
       allowNull: false
+    },
+    currency: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "RWF"
     },
     location: {
       type: DataTypes.STRING,

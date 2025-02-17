@@ -4,9 +4,11 @@ import { sequelize } from "../config/db.config";
 
 interface UserAttributes {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  role: "renter" | "host";
+  password: string;
+  role?: "renter" | "host";
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -18,7 +20,9 @@ class User
   implements UserAttributes
 {
   public id!: string;
-  public name!: string;
+  public firstName!: string;
+  public lastName!: string;
+  public password!: string;
   public email!: string;
   public role!: "renter" | "host";
   public readonly createdAt!: Date;
@@ -33,7 +37,11 @@ User.init(
       allowNull: false,
       primaryKey: true
     },
-    name: {
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    lastName: {
       type: DataTypes.STRING,
       allowNull: false
     },
@@ -42,9 +50,14 @@ User.init(
       allowNull: false,
       unique: true
     },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     role: {
       type: DataTypes.ENUM("renter", "host"),
-      allowNull: false
+      allowNull: false,
+      defaultValue: "renter"
     }
   },
   {
