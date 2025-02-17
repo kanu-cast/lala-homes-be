@@ -8,7 +8,8 @@ module.exports = {
         firstName: "John",
         lastName: "Doe",
         email: "johndoe@example.com",
-        password: "$2b$10$hashedpasswordhere", // bcrypt hashed password
+        password:
+          "$2b$10$JCAhX1e9DdBaHcMNJ7wBNekXA3Fc42FDCO8Ew0VLGaJ1ksyf1pQgS", // bcrypt hashed password
         role: "host",
         googleId: null,
         avatar: "https://example.com/avatar.jpg",

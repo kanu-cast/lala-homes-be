@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "npm run demigrate && npm run migrate && npm run seed:all && npx tsc && nodemon ./src/server.ts",
-    "start": "node ./dist/server.js",
+    "start": "npx tsc && node ./dist/server.js",
     "lint": "eslint . --ext .js,.ts --fix",
     "format": "prettier --write .",
     "prepare": "husky install",
