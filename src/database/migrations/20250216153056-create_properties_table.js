@@ -21,6 +21,10 @@ module.exports = {
         type: Sequelize.FLOAT,
         allowNull: false
       },
+      currency: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
       location: {
         type: Sequelize.STRING,
         allowNull: false

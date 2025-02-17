@@ -8,6 +8,7 @@ module.exports = {
         title: "Cozy Apartment in Kigali",
         description: "A beautiful 2-bedroom apartment with a great city view.",
         price: 75.0,
+        currency: "RWF",
         location: "Kigali, Rwanda",
         hostId: "f1c3a8d5-6e42-49b9-b7a3-12e8d76c4e5a", // Assuming John Doe is a host
         createdAt: new Date(),
@@ -19,6 +20,7 @@ module.exports = {
         description:
           "Enjoy a luxurious stay in this 4-bedroom villa with a pool.",
         price: 200.0,
+        currency: "RWF",
         location: "Nairobi, Kenya",
         hostId: "f1c3a8d5-6e42-49b9-b7a3-12e8d76c4e5a", // Hosted by John Doe
         createdAt: new Date(),
