@@ -6,7 +6,7 @@ import User from "../models/user.models";
 import UserService from "../services/auth.service";
 import { generateToken } from "../utils/auth.utils";
 import { sendResponse } from "../utils/sendResponse.utils";
-
+import passport from "passport";
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey"; // Change this in production
 
 // Register User
@@ -18,29 +18,10 @@ export const register: RequestHandler = async (
   try {
     // Check if user already exists
     const user = await UserService.registerUser(req.body, res);
-    // generate token for new user
-    const token = generateToken(user);
-    sendResponse(res, 201, true, "User registered successfully", {
-      user,
-      token
+    req.logIn(user, (err) => {
+      if (err) return next(err);
+      return res.status(201).json({ message: "Logged in successfully", user });
     });
-  } catch (error) {
-    return next({ error });
-  }
-};
-
-// Login User
-export const login: RequestHandler = async (req, res, next) => {
-  try {
-    // Find user by email
-    const validUserAndToken = await UserService.loginUser(req.body, res);
-    if (!validUserAndToken) {
-      sendResponse(res, 400, false, "Invalid Email/Password Combination");
-    } else {
-      sendResponse(res, 201, true, "Logged in successfully", {
-        validUserAndToken
-      });
-    }
   } catch (error) {
     return next({ error });
   }

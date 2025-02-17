@@ -16,7 +16,7 @@ const DB_URL =
   env === "development"
     ? process.env.DB_DEV_URL
     : env === "test"
-      ? "postgresql://test_db_owner:npg_unb72WUiTrYV@ep-small-glade-abds6o55-pooler.eu-west-2.aws.neon.tech/test_db?sslmode=require"
+      ? process.env.DB_TEST_URL
       : process.env.DB_PROD_URL;
 // Log the database URL to check if it's correct (remove this after debugging)
 console.log("Connecting to database:", DB_URL);

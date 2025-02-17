@@ -12,7 +12,7 @@ export function ErrorHandler(
   // Log the error (optional)
   console.error(err);
   if (res.headersSent) {
-    return next(err);
+    return;
   }
   // Send a response to the client
   res.status(500).json({

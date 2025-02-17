@@ -9,7 +9,7 @@ module.exports = {
         lastName: "Doe",
         email: "johndoe@example.com",
         password:
-          "$2b$10$JCAhX1e9DdBaHcMNJ7wBNekXA3Fc42FDCO8Ew0VLGaJ1ksyf1pQgS", // bcrypt hashed password
+          "$2b$10$s7qigg32D7Mwkiq4BLTxmOK3vO1opVnwEUVv1ms97bWzVapGjsSzW", // bcrypt hashed password pass123
         role: "host",
         googleId: null,
         avatar: "https://example.com/avatar.jpg",

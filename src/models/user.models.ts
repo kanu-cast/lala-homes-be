@@ -6,8 +6,9 @@ interface UserAttributes {
   id: string;
   firstName: string;
   lastName: string;
+  googleId?: string;
   email: string;
-  password: string;
+  password?: string;
   role?: "renter" | "host";
   createdAt?: Date;
   updatedAt?: Date;
@@ -23,6 +24,7 @@ class User
   public firstName!: string;
   public lastName!: string;
   public password!: string;
+  public googleId!: string;
   public email!: string;
   public role!: "renter" | "host";
   public readonly createdAt!: Date;
@@ -52,7 +54,11 @@ User.init(
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
+    },
+    googleId: {
+      type: DataTypes.STRING,
+      allowNull: true
     },
     role: {
       type: DataTypes.ENUM("renter", "host"),
