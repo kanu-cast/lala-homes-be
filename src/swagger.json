@@ -7,12 +7,12 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5000/api",
-      "description": "Local Development Server"
-    },
-    {
       "url": "https://lala-homes-be.onrender.com/api",
       "description": "Production Server"
+    },
+    {
+      "url": "http://localhost:5000/api",
+      "description": "Local Development Server"
     }
   ],
   "paths": {
@@ -33,39 +33,13 @@
                   "password": { "type": "string", "format": "password" }
                 },
                 "required": ["firstName", "lastName", "email", "password"]
-              },
-              "example": {
-                "firstName": "John",
-                "lastName": "Doe",
-                "email": "john.doe@example.com",
-                "password": "SecurePass123!"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "User successfully registered",
-            "content": {
-              "application/json": {
-                "example": {
-                  "success": true,
-                  "message": "User registered successfully"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid input data",
-            "content": {
-              "application/json": {
-                "example": {
-                  "success": false,
-                  "message": "Email already exists"
-                }
-              }
-            }
-          }
+          "201": { "description": "User successfully registered" },
+          "400": { "description": "Invalid input data" }
         }
       }
     },
@@ -84,10 +58,6 @@
                   "password": { "type": "string", "format": "password" }
                 },
                 "required": ["email", "password"]
-              },
-              "example": {
-                "email": "john.doe@example.com",
-                "password": "SecurePass123!"
               }
             }
           }
@@ -97,31 +67,25 @@
             "description": "Successful login",
             "content": {
               "application/json": {
-                "example": {
-                  "success": true,
-                  "token": "your-jwt-token"
-                }
+                "example": { "token": "your-jwt-token" }
               }
             }
           },
-          "401": {
-            "description": "Invalid credentials",
-            "content": {
-              "application/json": {
-                "example": {
-                  "success": false,
-                  "message": "Invalid email or password"
-                }
-              }
-            }
-          }
+          "401": { "description": "Invalid credentials" }
         }
       }
     },
     "/property": {
+      "get": {
+        "summary": "Get all properties",
+        "tags": ["Properties"],
+        "responses": {
+          "200": { "description": "List of all properties" }
+        }
+      },
       "post": {
         "summary": "Create a property",
-        "tags": ["Property"],
+        "tags": ["Properties"],
         "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
@@ -146,52 +110,77 @@
                   "category",
                   "location"
                 ]
-              },
-              "example": {
-                "title": "Luxury Villa in LA",
-                "description": "A beautiful villa with ocean views.",
-                "price": 200,
-                "category": "villa",
-                "location": "Los Angeles, CA"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Property created successfully",
-            "content": {
-              "application/json": {
-                "example": {
-                  "success": true,
-                  "message": "Property created successfully",
-                  "property": {
-                    "id": "123",
-                    "title": "Luxury Villa in LA",
-                    "description": "A beautiful villa with ocean views.",
-                    "price": 200,
-                    "category": "villa",
-                    "location": "Los Angeles, CA"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid input data",
-            "content": {
-              "application/json": {
-                "example": {
-                  "success": false,
-                  "message": "Missing required fields"
-                }
-              }
-            }
+          "201": { "description": "Property created successfully" },
+          "400": { "description": "Invalid input data" }
+        }
+      }
+    },
+    "/property/{id}": {
+      "get": {
+        "summary": "Get a single property",
+        "tags": ["Properties"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
           }
+        ],
+        "responses": {
+          "200": { "description": "Property details" },
+          "404": { "description": "Property not found" }
+        }
+      },
+      "put": {
+        "summary": "Update a property",
+        "tags": ["Properties"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Property updated successfully" },
+          "404": { "description": "Property not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a property",
+        "tags": ["Properties"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Property deleted successfully" },
+          "404": { "description": "Property not found" }
         }
       }
     },
     "/bookings": {
+      "get": {
+        "summary": "Get all bookings",
+        "tags": ["Bookings"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "List of all bookings" }
+        }
+      },
       "post": {
         "summary": "Create a booking",
         "tags": ["Bookings"],
@@ -208,45 +197,87 @@
                   "checkOut": { "type": "string", "format": "date" }
                 },
                 "required": ["propertyId", "checkIn", "checkOut"]
-              },
-              "example": {
-                "propertyId": "123",
-                "checkIn": "2025-03-10",
-                "checkOut": "2025-03-15"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Booking created successfully",
-            "content": {
-              "application/json": {
-                "example": {
-                  "success": true,
-                  "message": "Booking created successfully",
-                  "booking": {
-                    "id": "456",
-                    "propertyId": "123",
-                    "checkIn": "2025-03-10",
-                    "checkOut": "2025-03-15",
-                    "status": "pending"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid input data",
-            "content": {
-              "application/json": {
-                "example": {
-                  "success": false,
-                  "message": "Property ID is required"
-                }
-              }
-            }
+          "201": { "description": "Booking created successfully" },
+          "400": { "description": "Invalid input data" }
+        }
+      }
+    },
+    "/bookings/{id}": {
+      "get": {
+        "summary": "Get a booking",
+        "tags": ["Bookings"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
           }
+        ],
+        "responses": {
+          "200": { "description": "Booking details" },
+          "404": { "description": "Booking not found" }
+        }
+      },
+      "patch": {
+        "summary": "Update a booking",
+        "tags": ["Bookings"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Booking updated successfully" },
+          "404": { "description": "Booking not found" }
+        }
+      }
+    },
+    "/bookings/{id}/cancel": {
+      "patch": {
+        "summary": "Cancel a booking",
+        "tags": ["Bookings"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Booking canceled successfully" },
+          "404": { "description": "Booking not found" }
+        }
+      }
+    },
+    "/bookings/{id}/confirm": {
+      "patch": {
+        "summary": "Confirm a booking",
+        "tags": ["Bookings"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Booking confirmed successfully" },
+          "404": { "description": "Booking not found" }
         }
       }
     }
