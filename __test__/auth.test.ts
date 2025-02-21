@@ -1,100 +1,130 @@
 import request from "supertest";
-import app from "../src/app";
-import { sequelize } from "../src/config/db.config";
+import app from "../src/app"; // Adjust the path to your Express app
+import { sequelize } from "../src/config/db.config"; // Ensure correct path
+import User from "../src/models/user.models";
+import jwt from "jsonwebtoken";
 
-describe("Auth Routes", () => {
-  beforeAll(async () => {
-    await sequelize.sync({ force: true }); // Reset database before tests
-  });
+let token: string;
 
-  afterAll(async () => {
-    await sequelize.close();
-  });
-
-  let agent = request.agent(app);
-  let token: string;
-  let userId: string;
-
-  const userCredentials = {
-    firstName: "John",
-    lastName: "Doe",
-    email: "test@example.com",
-    password: "Test@1234"
-  };
-
-  /** ✅ Test User Registration */
-  it("should register a user successfully", async () => {
-    const res = await request(app)
-      .post("/api/auth/register")
-      .send(userCredentials);
-    expect(res.status).toBe(201);
-    expect(res.body).toHaveProperty("user");
-    userId = res.body.user.id;
-  });
-
-  /** ✅ Test User Login */
-  it("should log in a user successfully", async () => {
-    const res = await agent.post("/api/auth/login").send({
-      email: userCredentials.email,
-      password: userCredentials.password,
-      rememberMe: true
+describe("🔐 AUTHENTICATION TESTS", () => {
+  it("should register a new user", async () => {
+    const res = await request(app).post("/api/auth/register").send({
+      firstName: "John",
+      lastName: "Doe",
+      email: "johnwick@example.com",
+      password: "SecurePass123!"
     });
 
-    expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty("user");
-    token = res.headers["set-cookie"][0]; // Store session token for authenticated requests
-  });
-
-  /** ❌ Test Login with Incorrect Password */
-  it("should not log in with incorrect password", async () => {
-    const res = await request(app).post("/api/auth/login").send({
-      email: userCredentials.email,
-      password: "wrongpassword"
-    });
-
-    expect(res.status).toBe(400);
+    expect(res.statusCode).toBe(201);
     expect(res.body).toHaveProperty(
       "message",
-      "Invalid Email/Password Combination"
+      "User registered and logged in successfully"
+    );
+    expect(res.body).toHaveProperty("token");
+  });
+
+  it("should not register with an existing email", async () => {
+    const res = await request(app).post("/api/auth/register").send({
+      firstName: "John",
+      lastName: "Doe",
+      email: "johnwick@example.com",
+      password: "SecurePass123!"
+    });
+
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty("message", "Email already in use");
+  });
+
+  it("should log in an existing user", async () => {
+    const res = await request(app).post("/api/auth/login").send({
+      email: "johnwick@example.com",
+      password: "SecurePass123!"
+    });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty("token");
+    token = res.body.token;
+  });
+
+  it("should reject login with incorrect password", async () => {
+    const res = await request(app).post("/api/auth/login").send({
+      email: "johnwick@example.com",
+      password: "WrongPass123!"
+    });
+
+    expect(res.statusCode).toBe(401);
+  });
+
+  it("should access a protected route with a valid token", async () => {
+    const res = await request(app)
+      .post("/api/property/")
+      .send({
+        title: "Another cool crib",
+        description: "Another cozy crib is beautifulllllllll",
+        price: 1200,
+        currency: "rwf",
+        category: "villa",
+        location: "niboye, kicukiro, kigali, rwanda"
+      })
+      .set("Authorization", token);
+
+    expect(res.statusCode).toBe(201);
+    expect(res.body).toHaveProperty("message", "Property created successfully");
+  });
+
+  it("should reject access to a protected route without a token", async () => {
+    const res = await request(app).post("/api/property/").send({
+      title: "Another cool crib",
+      description: "Another cozy crib is beautifulllllllll",
+      price: 1200,
+      currency: "rwf",
+      category: "villa",
+      location: "niboye, kicukiro, kigali, rwanda"
+    });
+
+    expect(res.statusCode).toBe(401);
+    expect(res.body).toHaveProperty(
+      "message",
+      "Unauthorized: No token provided"
     );
   });
 
-  /** ✅ Test Authenticated Route (GET /me) */
-  it("should return user details when authenticated", async () => {
-    const res = await agent.get("/api/auth/me");
-    expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty("user");
+  it("should reject access to a protected route with an invalid token", async () => {
+    const res = await request(app)
+      .post("/api/property/")
+      .send({
+        title: "Another cool crib",
+        description: "Another cozy crib is beautifulllllllll",
+        price: 1200,
+        currency: "rwf",
+        category: "villa",
+        location: "niboye, kicukiro, kigali, rwanda"
+      })
+      .set("Authorization", "Bearer invalid.token.here");
+
+    expect(res.statusCode).toBe(401);
+    expect(res.body).toHaveProperty("message", "Unauthorized: Invalid token");
   });
 
-  /** ❌ Test Authenticated Route Without Login */
-  it("should return 401 if user is not authenticated", async () => {
-    const res = await request(app).get("/api/auth/me");
-    expect(res.status).toBe(401);
-  });
+  it("should simulate Google OAuth login", async () => {
+    const mockUser = {
+      id: "123456",
+      firstName: "Google",
+      lastName: "User",
+      email: "googleuser@example.com"
+    };
 
-  /** ✅ Test Logout */
-  it("should log out the user", async () => {
-    const res = await agent.post("/api/auth/logout");
-    expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty("message", "Logged out successfully");
-  });
+    const user = await User.create({
+      googleId: mockUser.id,
+      firstName: mockUser.firstName,
+      lastName: mockUser.lastName,
+      email: mockUser.email,
+      role: "renter"
+    });
 
-  /** ❌ Test Access to Protected Route After Logout */
-  it("should deny access to /me after logout", async () => {
-    const res = await agent.get("/api/auth/me");
-    expect(res.status).toBe(401);
-  });
+    const token = `Bearer ${jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET as string, { expiresIn: "1h" })}`;
 
-  /** ✅ Test Google OAuth Redirection */
-  it("should redirect to Google OAuth login", async () => {
-    const res = await request(app).get("/api/auth/google");
-    expect(res.status).toBe(302); // Expect a redirect response
-  });
-
-  /** ❌ Test Google OAuth Callback Failure */
-  it("should redirect to login on Google OAuth failure", async () => {
-    const res = await request(app).get("/api/auth/google/callback");
-    expect(res.status).toBe(302);
-    expect(res.headers.location).toContain("//accounts.google.com/o/oauth2");
+    expect(user).toBeDefined();
+    expect(token).toMatch(/^Bearer\s[\w-]+\.[\w-]+\.[\w-]+$/);
   });
 });

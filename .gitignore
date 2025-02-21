@@ -2,7 +2,7 @@
 node_modules/
 dist/
 .env
-
+.github/
 # Logs
 logs/
 *.log

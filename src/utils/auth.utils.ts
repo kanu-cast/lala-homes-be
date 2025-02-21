@@ -1,12 +1,14 @@
 import jwt from "jsonwebtoken";
-import User from "../models/user.models";
-
 const JWT_SECRET = process.env.JWT_SECRET_KEY || "your-secret-key";
 
-export const generateToken = (user: User) => {
-  return jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET, {
-    expiresIn: "1d"
-  });
+import { UserAttributes } from "../models/user.models";
+
+export const generateAuthToken = (user: UserAttributes): string => {
+  return jwt.sign(
+    { id: user.id, role: user.role },
+    process.env.JWT_SECRET as string,
+    { expiresIn: "1h" }
+  );
 };
 
 export const verifyToken = (token: string) => {

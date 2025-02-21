@@ -1,0 +1,294 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Rental Booking Platform API",
+    "version": "1.0.0",
+    "description": "API documentation for the rental booking platform"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api",
+      "description": "Local Development Server"
+    },
+    {
+      "url": "https://lala-homes-be.onrender.com/api",
+      "description": "Production Server"
+    }
+  ],
+  "paths": {
+    "/auth/signup": {
+      "post": {
+        "summary": "User Signup",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": { "type": "string" },
+                  "lastName": { "type": "string" },
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string", "format": "password" }
+                },
+                "required": ["firstName", "lastName", "email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "User successfully registered" },
+          "400": { "description": "Invalid input data" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "User Login",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string", "format": "password" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "content": {
+              "application/json": {
+                "example": { "token": "your-jwt-token" }
+              }
+            }
+          },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/properties": {
+      "get": {
+        "summary": "Get all properties",
+        "tags": ["Properties"],
+        "responses": {
+          "200": { "description": "List of all properties" }
+        }
+      },
+      "post": {
+        "summary": "Create a property",
+        "tags": ["Properties"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "price": { "type": "number" },
+                  "category": {
+                    "type": "string",
+                    "enum": ["villa", "townhouse", "apartment", "cottage"]
+                  },
+                  "location": { "type": "string" }
+                },
+                "required": [
+                  "title",
+                  "description",
+                  "price",
+                  "category",
+                  "location"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Property created successfully" },
+          "400": { "description": "Invalid input data" }
+        }
+      }
+    },
+    "/properties/{id}": {
+      "get": {
+        "summary": "Get a single property",
+        "tags": ["Properties"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Property details" },
+          "404": { "description": "Property not found" }
+        }
+      },
+      "put": {
+        "summary": "Update a property",
+        "tags": ["Properties"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Property updated successfully" },
+          "404": { "description": "Property not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a property",
+        "tags": ["Properties"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Property deleted successfully" },
+          "404": { "description": "Property not found" }
+        }
+      }
+    },
+    "/bookings": {
+      "get": {
+        "summary": "Get all bookings",
+        "tags": ["Bookings"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "List of all bookings" }
+        }
+      },
+      "post": {
+        "summary": "Create a booking",
+        "tags": ["Bookings"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "propertyId": { "type": "string" },
+                  "checkIn": { "type": "string", "format": "date" },
+                  "checkOut": { "type": "string", "format": "date" }
+                },
+                "required": ["propertyId", "checkIn", "checkOut"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Booking created successfully" },
+          "400": { "description": "Invalid input data" }
+        }
+      }
+    },
+    "/bookings/{id}": {
+      "get": {
+        "summary": "Get a booking",
+        "tags": ["Bookings"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Booking details" },
+          "404": { "description": "Booking not found" }
+        }
+      },
+      "patch": {
+        "summary": "Update a booking",
+        "tags": ["Bookings"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Booking updated successfully" },
+          "404": { "description": "Booking not found" }
+        }
+      }
+    },
+    "/bookings/{id}/cancel": {
+      "patch": {
+        "summary": "Cancel a booking",
+        "tags": ["Bookings"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Booking canceled successfully" },
+          "404": { "description": "Booking not found" }
+        }
+      }
+    },
+    "/bookings/{id}/confirm": {
+      "patch": {
+        "summary": "Confirm a booking",
+        "tags": ["Bookings"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Booking confirmed successfully" },
+          "404": { "description": "Booking not found" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

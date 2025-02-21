@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.models"; // Ensure correct path based on your structure
 import { sendResponse } from "../utils/sendResponse.utils";
 import { Response } from "express";
-import { generateToken } from "../utils/auth.utils";
+
 interface RegisterUserInput {
   firstName: string;
   lastName: string;
@@ -37,15 +37,6 @@ class UserService {
     });
 
     return user;
-  }
-  static async loginUser(body: LoginUserInput, res: Response) {
-    const { email, password } = body;
-    const user = await User.findOne({ where: { email } });
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return null;
-    }
-    const token = generateToken(user!);
-    return { user, token };
   }
 }
 

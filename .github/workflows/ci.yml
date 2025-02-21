@@ -1,19 +1,29 @@
-name: CI
+name: CI Pipeline
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+      - dev
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      NODE_ENV: test
+  
+      DB_USER: ${{ secrets.TEST_DB_USER }}
+      DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+      DB_NAME: ${{ secrets.TEST_DB_NAME }}
+      DB_HOST: ${{ secrets.TEST_DB_HOST }}
+      DB_PORT: 5432
+      DB_SSL: "true"
+      DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+      
+
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Node.js
@@ -24,10 +34,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Run migrations
+        run: npx sequelize-cli db:migrate
+
       - name: Run tests
         run: npm test
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}

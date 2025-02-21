@@ -25,6 +25,7 @@ class Booking
   public checkIn!: Date;
   public checkOut!: Date;
   public status!: "pending" | "confirmed" | "canceled";
+  property: any;
 }
 
 Booking.init(
