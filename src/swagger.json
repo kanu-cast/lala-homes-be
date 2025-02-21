@@ -16,7 +16,7 @@
     }
   ],
   "paths": {
-    "/auth/signup": {
+    "/auth/register": {
       "post": {
         "summary": "User Signup",
         "tags": ["Auth"],
@@ -75,17 +75,17 @@
         }
       }
     },
-    "/properties": {
+    "/property": {
       "get": {
-        "summary": "Get all properties",
-        "tags": ["Properties"],
+        "summary": "Get all property",
+        "tags": ["Property"],
         "responses": {
-          "200": { "description": "List of all properties" }
+          "200": { "description": "List of all property" }
         }
       },
       "post": {
         "summary": "Create a property",
-        "tags": ["Properties"],
+        "tags": ["Property"],
         "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
@@ -120,10 +120,10 @@
         }
       }
     },
-    "/properties/{id}": {
+    "/property/{id}": {
       "get": {
         "summary": "Get a single property",
-        "tags": ["Properties"],
+        "tags": ["Property"],
         "parameters": [
           {
             "name": "id",
@@ -139,7 +139,7 @@
       },
       "put": {
         "summary": "Update a property",
-        "tags": ["Properties"],
+        "tags": ["Property"],
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
@@ -156,7 +156,7 @@
       },
       "delete": {
         "summary": "Delete a property",
-        "tags": ["Properties"],
+        "tags": ["Property"],
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
