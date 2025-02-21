@@ -1,11 +1,11 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as LocalStrategy } from "passport-local";
+import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import bcrypt from "bcryptjs";
 import User from "../models/user.models";
 
-// 🟢 GOOGLE STRATEGY 0AUTH
-
+// 🟢 GOOGLE STRATEGY (OAuth)
 passport.use(
   new GoogleStrategy(
     {
@@ -22,7 +22,8 @@ passport.use(
             googleId: profile.id,
             firstName: profile.name?.givenName!,
             lastName: profile.name?.familyName!,
-            email: profile.emails?.[0].value!
+            email: profile.emails?.[0].value!,
+            role: "renter"
           });
         }
 
@@ -38,7 +39,7 @@ passport.use(
 passport.use(
   new LocalStrategy(
     {
-      usernameField: "email", // We are using email instead of "username"
+      usernameField: "email",
       passwordField: "password"
     },
     async (email, password, done) => {
@@ -65,16 +66,24 @@ passport.use(
   )
 );
 
-// 🟢 SERIALIZATION & DESERIALIZATION
-passport.serializeUser((user: any, done) => {
-  done(null, user.id);
-});
+// 🟢 JWT STRATEGY
+const jwtOptions = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_SECRET as string
+};
 
-passport.deserializeUser(async (id: string, done) => {
-  try {
-    const user = await User.findByPk(id);
-    done(null, user);
-  } catch (err) {
-    done(err, null);
-  }
-});
+passport.use(
+  new JwtStrategy(jwtOptions, async (payload, done) => {
+    try {
+      const user = await User.findByPk(payload.id);
+
+      if (user) {
+        return done(null, user);
+      } else {
+        return done(null, false);
+      }
+    } catch (err) {
+      return done(err, false);
+    }
+  })
+);

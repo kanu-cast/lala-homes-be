@@ -1,67 +1,153 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { register } from "../controllers/auth.controllers";
 import passport from "passport";
+import jwt from "jsonwebtoken";
+import {
+  signupValidation,
+  loginValidation
+} from "../middlewares/validators.middlewares";
+import { validate } from "../middlewares/validate.middlewares";
+import User from "../models/user.models";
 
 const router = Router();
 
-router.post("/register", register);
+// Register route
+router.post("/register", signupValidation, validate, register);
 
-router.post("/login", (req, res, next) => {
-  passport.authenticate(
-    "local",
-    (err: any, user: Express.User, info: { message: any }) => {
-      if (err) return next(err);
-      if (!user) return res.status(400).json({ message: info?.message });
+// Login route (Local Strategy)
+router.post(
+  "/login",
+  loginValidation,
+  validate,
+  passport.authenticate("local", { session: false }),
+  async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        res.status(401).json({ success: false, message: "Unauthorized" });
+        return;
+      }
 
-      req.logIn(user, (err) => {
-        if (err) {
-          return next(err);
-        } else {
-          req.session.cookie.maxAge = req.body.rememberMe
-            ? 1000 * 60 * 60 * 24 * 7 // 7 days
-            : 1000 * 60 * 30 * 12; // Default 6 hours
-          return res.json({ message: "Logged in successfully", user });
+      const token = jwt.sign(
+        {
+          id: req.user.id,
+          role: req.user.role,
+          firstName: req.user.firstName,
+          lastName: req.user.lastName
+        },
+        process.env.JWT_SECRET as string,
+        { expiresIn: "6h" }
+      );
+
+      res.json({
+        success: true,
+        token: "Bearer " + token,
+        user: {
+          id: req.user.id,
+          role: req.user.role,
+          firstName: req.user.firstName,
+          lastName: req.user.lastName,
+          email: req.user.email
         }
       });
+      return;
+    } catch (error) {
+      res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
     }
-  )(req, res, next);
-});
+  }
+);
 
 // Initiate Google OAuth
 router.get(
   "/google",
-  passport.authenticate("google", {
-    scope: ["profile", "email"]
-  })
+  passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
+// Google OAuth callback route
+// router.get(
+//   "/google/callback",
+//   passport.authenticate("google", { session: false }),
+//   async (req, res) => {
+//     try {
+//       if (!req.user) {
+//         res.status(401).json({ success: false, message: "Unauthorized" });
+//         return;
+//       }
+
+//       const token = jwt.sign(
+//         { id: req.user.id, role: req.user.role },
+//         process.env.JWT_SECRET as string,
+//         { expiresIn: "1h" }
+//       );
+
+//       res.json({
+//         success: true,
+//         token: "Bearer " + token,
+//         user: {
+//           id: req.user.id,
+//           role: req.user.role,
+//           firstName: req.user.firstName,
+//           lastName: req.user.lastName,
+//           email: req.user.email
+//         }
+//       });
+//     } catch (error) {
+//       res
+//         .status(500)
+//         .json({ success: false, message: "Internal server error" });
+//     }
+//   }
+// );
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    scope: ["profile", "email"], // required scopes don't touch  nigga
-    failureRedirect: `${process.env.FRONTEND_URL}/login`
+    scope: ["profile", "email"],
+    session: false
   }),
-  (req, res) => {
-    res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
+  async (req, res) => {
+    try {
+      if (!req.user) {
+        res.status(401).json({ success: false, message: "Unauthorized" });
+        return;
+      }
+
+      // Check if user exists in the database
+      let user = await User.findOne({ where: { email: req.user.email } });
+
+      if (!user) {
+        // Create a new user
+        user = await User.create({
+          googleId: req.user.id, // Store Google ID
+          firstName: req.user.firstName as string,
+          lastName: req.user.lastName as string,
+          email: req.user.email as string,
+          role: "renter" // Default role
+        });
+      }
+
+      // Generate JWT token
+      const token = jwt.sign(
+        {
+          id: user.id,
+          role: user.role,
+          firstName: user.firstName,
+          lastName: user.lastName
+        },
+        process.env.JWT_SECRET as string,
+        { expiresIn: "6h" }
+      );
+
+      res.redirect(
+        `${process.env.FRONTEND_URL}/property?id=${user.id}&token=${token}&first=${user.firstName}&last=${user.lastName}`
+      );
+      return;
+    } catch (error) {
+      res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
+    }
   }
 );
-// auth me route
-router.get("/me", (req, res) => {
-  if (req.isAuthenticated()) {
-    res.status(200).json({ user: req.user });
-  }
-  res.status(401).json({ message: "Not authenticated" });
-});
-//logutroute
-router.post("/logout", (req, res) => {
-  req.logout((err) => {
-    if (err) return res.status(500).json({ message: "Logout failed" });
-    req.session.destroy(() => {
-      res
-        .clearCookie("connect.sid")
-        .json({ message: "Logged out successfully" }); // Clears session cookie
-    });
-  });
-});
 
 export default router;

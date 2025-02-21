@@ -2,14 +2,15 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/db.config";
 
-interface UserAttributes {
+export interface UserAttributes {
   id: string;
   firstName: string;
   lastName: string;
   googleId?: string;
   email: string;
   password?: string;
-  role?: "renter" | "host";
+  avatar?: string;
+  role: "renter" | "host";
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -24,6 +25,7 @@ class User
   public firstName!: string;
   public lastName!: string;
   public password!: string;
+  public avatar!: string;
   public googleId!: string;
   public email!: string;
   public role!: "renter" | "host";
@@ -53,6 +55,10 @@ User.init(
       unique: true
     },
     password: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    avatar: {
       type: DataTypes.STRING,
       allowNull: true
     },
