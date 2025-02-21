@@ -40,29 +40,30 @@ cd lala-homes-be
 ```
 
 ## Install dependencies
+
 ```
 
 npm install
 
 ```
 
-
-## Start Development Server 
-
+## Start Development Server
 
 ```
 
 npm run dev
 
 ```
+
 ## Start Production Server
+
 ```
 
 npm run start
 
 ```
 
-## Environment variables 
+## Environment variables
 
 ```
 PORT=5000
@@ -76,9 +77,11 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 ```
 
 ## 🔥 API Documentation
+
 Once the server is running, access the Swagger API docs at:
+
 ```
-http://localhost:5000/api/docs 
+http://localhost:5000/api/docs
 ```
 
 ```
@@ -86,17 +89,22 @@ https://lala-homes-be.onrender.com/api/docs/
 ```
 
 ## Build and Run the Containers
+
 🐳 Running with Docker
 
 ```
 docker compose up -d
 
 ```
+
 Stopping containers
+
 ```
 docker compose down
 ```
+
 ## Testing
+
 ```
 npm test
 ```
