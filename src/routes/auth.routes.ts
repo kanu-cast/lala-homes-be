@@ -122,6 +122,7 @@ router.get(
           firstName: req.user.firstName as string,
           lastName: req.user.lastName as string,
           email: req.user.email as string,
+          avatar: req.user?.photos?.[0]?.value || null, // Save the avatar URL
           role: "renter" // Default role
         });
       }
