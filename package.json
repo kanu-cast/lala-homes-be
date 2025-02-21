@@ -13,7 +13,8 @@
     "test": "npm run demigrate && npm run migrate && npm run seed:all && jest --coverage --runInBand  --detectOpenHandles",
     "demigrate": "npx sequelize db:migrate:undo:all",
     "migrate": "npx sequelize db:migrate",
-    "seed:all": "npx sequelize db:seed:all"
+    "seed:all": "npx sequelize db:seed:all",
+    "build": "tsc && cp src/swagger.json dist/swagger.json"
   },
   "lint-staged": {
     "src/**/*.{js,ts}": [
