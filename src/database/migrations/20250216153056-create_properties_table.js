@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Properties", {
+    await queryInterface.createTable("properties", {
       id: {
         allowNull: false,
         primaryKey: true,
@@ -25,6 +25,15 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      imageUrl: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      category: {
+        type: Sequelize.ENUM("villa", "apartment", "townhouse", "cottage"),
+        allowNull: false,
+        defaultValue: "townhouse"
+      },
       location: {
         type: Sequelize.STRING,
         allowNull: false
@@ -33,7 +42,7 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: "Users",
+          model: "users",
           key: "id"
         },
         onDelete: "CASCADE"
@@ -49,6 +58,6 @@ module.exports = {
     });
   },
   async down(queryInterface) {
-    await queryInterface.dropTable("Properties");
+    await queryInterface.dropTable("properties");
   }
 };

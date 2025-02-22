@@ -9,8 +9,10 @@ interface PropertyAttributes {
   description: string;
   price: number;
   currency: string;
+  category: "villa" | "apartment" | "townhouse" | "cottage";
   location: string;
   hostId: string;
+  imageUrl?: string;
 }
 
 interface PropertyCreationAttributes
@@ -25,8 +27,10 @@ class Property
   public description!: string;
   public price!: number;
   public currency!: string;
+  public category!: "villa" | "apartment" | "townhouse" | "cottage";
   public location!: string;
   public hostId!: string;
+  public imageUrl!: string;
 }
 
 Property.init(
@@ -54,6 +58,11 @@ Property.init(
       allowNull: false,
       defaultValue: "RWF"
     },
+    category: {
+      type: DataTypes.ENUM("villa", "apartment", "townhouse", "cottage"),
+      allowNull: false,
+      defaultValue: "townhouse"
+    },
     location: {
       type: DataTypes.STRING,
       allowNull: false
@@ -62,7 +71,8 @@ Property.init(
       type: DataTypes.UUID,
       allowNull: false,
       references: { model: "users", key: "id" }
-    }
+    },
+    imageUrl: { type: DataTypes.STRING, allowNull: true }
   },
   {
     sequelize,

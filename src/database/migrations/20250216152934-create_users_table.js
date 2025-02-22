@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Users", {
+    await queryInterface.createTable("users", {
       id: {
         allowNull: false,
         primaryKey: true,
@@ -28,7 +28,8 @@ module.exports = {
       },
       role: {
         type: Sequelize.ENUM("renter", "host"),
-        allowNull: false
+        allowNull: false,
+        defaultValue: "renter"
       },
       googleId: {
         type: Sequelize.STRING,
@@ -50,6 +51,6 @@ module.exports = {
     });
   },
   async down(queryInterface) {
-    await queryInterface.dropTable("Users");
+    await queryInterface.dropTable("users");
   }
 };

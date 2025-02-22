@@ -2,14 +2,14 @@
 
 module.exports = {
   async up(queryInterface) {
-    await queryInterface.bulkInsert("Users", [
+    await queryInterface.bulkInsert("users", [
       {
         id: "f1c3a8d5-6e42-49b9-b7a3-12e8d76c4e5a",
         firstName: "John",
         lastName: "Doe",
         email: "johndoe@example.com",
         password:
-          "$2b$10$JCAhX1e9DdBaHcMNJ7wBNekXA3Fc42FDCO8Ew0VLGaJ1ksyf1pQgS", // bcrypt hashed password
+          "$2b$10$s7qigg32D7Mwkiq4BLTxmOK3vO1opVnwEUVv1ms97bWzVapGjsSzW", // bcrypt hashed password pass123
         role: "host",
         googleId: null,
         avatar: "https://example.com/avatar.jpg",
@@ -32,6 +32,6 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.bulkDelete("Users", null, {});
+    await queryInterface.bulkDelete("users", null, {});
   }
 };
