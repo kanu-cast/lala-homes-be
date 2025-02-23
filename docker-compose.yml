@@ -16,7 +16,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   api:
-    build: .
+    image: kanucast/lala-homes-be:latest
     container_name: rental_booking_api
     restart: always
     env_file: .env
@@ -24,9 +24,6 @@ services:
       - db
     ports:
       - "5000:5000"
-    volumes:
-      - .:/app
-      - /app/node_modules
     command: ["npm", "run", "start"]
 
 volumes:
