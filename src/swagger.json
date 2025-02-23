@@ -26,7 +26,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {
+                "property": {
                   "firstName": { "type": "string" },
                   "lastName": { "type": "string" },
                   "email": { "type": "string", "format": "email" },
@@ -53,7 +53,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {
+                "property": {
                   "email": { "type": "string", "format": "email" },
                   "password": { "type": "string", "format": "password" }
                 },
@@ -75,17 +75,17 @@
         }
       }
     },
-    "/properties": {
+    "/property": {
       "get": {
-        "summary": "Get all properties",
-        "tags": ["Properties"],
+        "summary": "Get all property",
+        "tags": ["Property"],
         "responses": {
-          "200": { "description": "List of all properties" }
+          "200": { "description": "List of all property" }
         }
       },
       "post": {
         "summary": "Create a property",
-        "tags": ["Properties"],
+        "tags": ["Property"],
         "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
@@ -93,7 +93,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {
+                "property": {
                   "title": { "type": "string" },
                   "description": { "type": "string" },
                   "price": { "type": "number" },
@@ -120,10 +120,10 @@
         }
       }
     },
-    "/properties/{id}": {
+    "/property/{id}": {
       "get": {
         "summary": "Get a single property",
-        "tags": ["Properties"],
+        "tags": ["Property"],
         "parameters": [
           {
             "name": "id",
@@ -139,7 +139,7 @@
       },
       "put": {
         "summary": "Update a property",
-        "tags": ["Properties"],
+        "tags": ["Property"],
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
@@ -156,7 +156,7 @@
       },
       "delete": {
         "summary": "Delete a property",
-        "tags": ["Properties"],
+        "tags": ["Property"],
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
@@ -191,7 +191,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {
+                "property": {
                   "propertyId": { "type": "string" },
                   "checkIn": { "type": "string", "format": "date" },
                   "checkOut": { "type": "string", "format": "date" }
