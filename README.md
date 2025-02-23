@@ -46,21 +46,6 @@ npm install
 
 ```
 
-## enviroments
-
-```
-
-PORT=5000
-DB_USER=your_db_user
-DB_PASSWORD=your_db_password
-DB_NAME=your_db_name
-DB_HOST=your_db_host
-JWT_SECRET=your_jwt_secret
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-
-```
-
 
 ## Start Development Server 
 
@@ -92,8 +77,13 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 
 ## 🔥 API Documentation
 Once the server is running, access the Swagger API docs at:
+```
+http://localhost:5000/api/docs 
+```
 
-http://localhost:5000/api/docs
+```
+https://lala-homes-be.onrender.com/api/docs/
+```
 
 ## Build and Run the Containers
 🐳 Running with Docker
