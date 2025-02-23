@@ -38,6 +38,7 @@ export const isAuthenticated = async (
 
     // Attach the user to the request object
     req.user = {
+      photos: null,
       id: user.id,
       role: user.role as "renter" | "host",
       firstName: user.firstName,
