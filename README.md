@@ -33,7 +33,7 @@ This is the backend service for **LALA Homes**, a home booking platform built wi
 ### 1️⃣ Clone the Repository
 
 ```sh
-git clone https://github.com/yourusername/lala-homes-be.git
+git clone https://github.com/kanu-cast/lala-homes-be.git
 cd lala-homes-be
 
 
